@@ -26,7 +26,7 @@ baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 logo                     : "/assets/myprofile/IMG_9168.JPG" # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
-masthead_title           : "5차 전직이 하고 싶어요" # overrides the website title displayed in the masthead, use " " for no title
+masthead_title           : "아자자 파팅파팅!" # overrides the website title displayed in the masthead, use " " for no title
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
 comments:
