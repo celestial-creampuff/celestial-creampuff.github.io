@@ -25,7 +25,7 @@ url                      : 'https://celestial-creampuff.github.io' # the base ho
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
-logo                     : "/assets/myprofile/IMG_9168.JPG" # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
+logo                     : "/assets/myprofile/KakaoTalk_20230708_224908441.png" # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
 masthead_title           : "아자자 파팅파팅!" # overrides the website title displayed in the masthead, use " " for no title
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -108,7 +108,7 @@ author:
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "**짱**이 되고 싶은 뚝딱거리는 쿠리미"
   location         : "Republic of Korea"
-  email            :
+  email            : 
   links:
     - label: "glrmi0796@gmail.com"
       icon: "fas fa-fw fa-envelope-square"
