@@ -105,7 +105,7 @@ analytics:
 # Site Author
 author:
   name             : "나? 크림!"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/myprofile/KakaoTalk_20230708_224908441.png" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "**짱**이 되고 싶은 뚝딱거리는 쿠리미"
   location         : "Republic of Korea"
   email            : 
