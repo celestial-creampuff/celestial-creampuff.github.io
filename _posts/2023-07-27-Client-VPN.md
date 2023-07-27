@@ -75,6 +75,28 @@ AWS Client VPN은 AWS 리소스 및 온프레미스 네트워크의 리소스에
 
 ### CloudWatch Log 그룹 설정
 
+ 해당 단계는 Client VPN 연결 시 로그를 확인하기 위하여 설정하는 단계입니다.
+1. Log 그룹을 만들기 위하여 콘솔 상단에 돋보기 버튼 옆에 CloudWatch를 검색하고 서비스에서 CloudWatch를 클릭합니다.
+![Log 그룹 설정 1](/assets/2023-07/Client_VPN/2023-07-27-12.png)</br>
+[Log 그룹 설정 1](/assets/2023-07/Client_VPN/2023-07-27-12.png)</br></br>
+2. 좌측 사이드 바에 로그 부문에서 로그 그룹을 클릭하고 로그 그룹 생성을 클릭합니다.
+![Log 그룹 설정 2](/assets/2023-07/Client_VPN/2023-07-27-13.png)</br>
+[Log 그룹 설정 2](/assets/2023-07/Client_VPN/2023-07-27-13.png)</br></br>
+3. 로그 그룹 이름은 /aws/clientvpn 으로 설정하고 생성을 클릭합니다.
+![Log 그룹 설정 3](/assets/2023-07/Client_VPN/2023-07-27-14.png)</br>
+[Log 그룹 설정 3](/assets/2023-07/Client_VPN/2023-07-27-14.png)</br></br>
+4. 아래와 같이 log 그룹이 만들어진 것을 볼 수 있습니다. 그리고 해당 로그 그룹을 클릭해서 들어가주세요.
+![Log 그룹 설정 4](/assets/2023-07/Client_VPN/2023-07-27-15.png)</br>
+[Log 그룹 설정 4](/assets/2023-07/Client_VPN/2023-07-27-15.png)</br></br>
+5. 해당 로그 그룹에 들어가셨다면 아래 사진과 같이 로그 스트림 생성을 클릭합니다.
+![Log 그룹 설정 5](/assets/2023-07/Client_VPN/2023-07-27-16.png)</br>
+[Log 그룹 설정 5](/assets/2023-07/Client_VPN/2023-07-27-16.png)</br></br>
+6. 로그 스트림을 아래와 같이 생성합니다.
+그렇다면 두 번째 사진과 같이 로그 스트림이 생성된 것을 볼 수 있습니다.</br>
+![Log 그룹 설정 5](/assets/2023-07/Client_VPN/2023-07-27-17.png)</br>
+[Log 그룹 설정 5](/assets/2023-07/Client_VPN/2023-07-27-17.png)</br></br>
+![Log 그룹 설정 6](/assets/2023-07/Client_VPN/2023-07-27-18.png)</br>
+[Log 그룹 설정 6](/assets/2023-07/Client_VPN/2023-07-27-18.png)</br></br>
 
 
 ### 인증서 만들기
