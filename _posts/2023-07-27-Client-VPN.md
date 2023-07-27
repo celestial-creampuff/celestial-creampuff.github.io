@@ -716,26 +716,194 @@ Open VPN 도구를 이용하여 연결할 시, 아래 사진과 같이 downloade
 
 ### 로그 확인
 
+CloudWatch 콘솔로 이동해서 만든 로그 그룹(/aws/clientvpn)을 클릭하고, 그 아래의 만든 로그 스트림(rmi_clinent_log)을 클릭합니다. 이렇게 해서 아래 사진과 같이 연결 로그를 확인할 수 있었습니다.
+
+![Log 확인](/assets/2023-07/Client_VPN/2023-07-27-82.png)
+[Log 확인](/assets/2023-07/Client_VPN/2023-07-27-82.png)
+
+|프로젝트|설정값|
+|---|---|
+|연결 시도 상태|상태|
+|연결 시작 시간|연결 시작 시간|
+|클라이언트 IP|클라이언트 CIDR에서 할당된 IP|
+|일반 이름|인증서의 CommonName|
+|장치-ip|접속원 PC의 IP|
 
 
 ### 운영 환경 도중 Client 인증서 삭제 시
+
+먼저 Windows 운영 체제를 사용한다면 터미널이나 CMD를 관리자 권한으로 실행해주세요.
+(관리자 권한으로 실행하지 않을 시, revoke 작업을 해결하지 못할 수 있습니다.)
+
+#### 명령어 입력
+```py
+## easyrsa를 시작할 수 있는 폴더로 이동 후 start
+(해당 경로 및 easyrsa의 버전에 따라 명령어가 달라질 수 있습니다. 현재 아래의 명령어 같은 경우는
+컴퓨터가 인식할 수 있게 몇 글자를 치고 tab 버튼을 눌러 자동 완성으로 한 사항입니다.)
+
+C:\>cd "Program Files\OpenVPN\EasyRSA-3.1.0"
+
+C:\Program Files\OpenVPN\EasyRSA-3.1.0>EasyRSA-Start.bat
+
+## client.domain.tld 제거
+# ./easyrsa revoke client.domain.tld
+
+(도중에 yes 입력해서 계속 진행)
+
+## EasyRSA 스크립트를 사용하여 인증서 폐지 목록(Certificate Revocation List, CRL)을 생성
+# ./easyrsa gen-crl
+
+(해당 과정을 성공적으로 거쳤다면, 아래와 같은 메시지가 출력이 됩니다. 거기서 경로를 알 수 있습니다.)
+An updated CRL has been created.
+CRL file: C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/crl.pem
+
+```
+#### 명령어 출력
+```py
+Microsoft Windows [Version 10.0.22000.1696]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\kimhj>cd ..
+
+C:\Users>cd ..
+
+C:\>cd "Program Files\OpenVPN\EasyRSA-3.1.0"
+
+C:\Program Files\OpenVPN\EasyRSA-3.1.0>EasyRSA-Start.bat
+
+Welcome to the EasyRSA 3 Shell for Windows.
+Easy-RSA 3 is available under a GNU GPLv2 license.
+
+Invoke './easyrsa' to call the program. Without commands, help is displayed.
+
+EasyRSA Shell
+# ./easyrsa revoke client.domain.tld
+* Notice:
+Using Easy-RSA configuration from: C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/vars
+
+* Notice:
+Using SSL: openssl OpenSSL 3.0.3 3 May 2022 (Library: OpenSSL 3.0.3 3 May 2022)
+
+
+  Please confirm you wish to revoke the certificate
+  with the following subject:
+
+  subject=
+    commonName                = client.domain.tld
+
+  serial-number: F1AD62ACC67E777EA00A1AD885DAFEF4
+
+
+Type the word 'yes' to continue, or any other input to abort.
+    Continue with revocation: yes
+
+Using configuration from C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/safessl-easyrsa.cnf.init-tmp
+Revoking Certificate F1AD62ACC67E777EA00A1AD885DAFEF4.
+Data Base Updated
+
+* Notice:
+
+IMPORTANT!!!
+
+Revocation was successful. You must run gen-crl and upload a CRL to your
+infrastructure in order to prevent the revoked cert from being accepted.
+
+
+EasyRSA Shell
+# ./easyrsa gen-crl
+* Notice:
+Using Easy-RSA configuration from: C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/vars
+
+* Notice:
+Using SSL: openssl OpenSSL 3.0.3 3 May 2022 (Library: OpenSSL 3.0.3 3 May 2022)
+
+Using configuration from C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/safessl-easyrsa.cnf.init-tmp
+
+* Notice:
+
+An updated CRL has been created.
+CRL file: C:/Program Files/OpenVPN/EasyRSA-3.1.0/pki/crl.pem
+
+
+EasyRSA Shell
+#
+```
+
+#### 명령어 출력시 캡쳐화면
+![운영 환경에서의 Client 인증서 삭제1](/assets/2023-07/Client_VPN/2023-07-27-83.png)
+[운영 환경에서의 Client 인증서 삭제1](/assets/2023-07/Client_VPN/2023-07-27-83.png)
+
+이제 생성된 CRL 파일의 내용을 AWS 환경에 적용해야 할 차례입니다.
+다시 콘솔로 접속 후 VPC 콘솔에 접근한 뒤, 좌측 사이드 바에서 [Client VPN 엔드포인트]를 클릭해주세요.
+그리고 해당 클라이언트 VPN 엔드포인트를 선택하고 작업 -> 클라이언트 인증서 CRL 가져오기를 클릭합니다.
+
+![운영 환경에서의 Client 인증서 삭제2](/assets/2023-07/Client_VPN/2023-07-27-84.png)
+[운영 환경에서의 Client 인증서 삭제2](/assets/2023-07/Client_VPN/2023-07-27-84.png)
+
+여기선 아까 gen-crl 명령어 입력 시에 나왔던 crl.pem 파일이 있는 경로로 이동해줍니다.
+
+그리고 해당 파일을 열어 내용을 복사해줍니다.
+
+다시 콘솔로 돌아와서 세번째 사진과 같이 pem 파일의 내용을 인증서 취소 목록 란에 
+붙여넣기 해주고 나서 하단에 클라이언트 인증서 CRL 가져오기를 클릭합니다.
+
+![운영 환경에서의 Client 인증서 삭제3](/assets/2023-07/Client_VPN/2023-07-27-85.png)
+[운영 환경에서의 Client 인증서 삭제3](/assets/2023-07/Client_VPN/2023-07-27-85.png)
+![운영 환경에서의 Client 인증서 삭제4](/assets/2023-07/Client_VPN/2023-07-27-86.png)
+[운영 환경에서의 Client 인증서 삭제4](/assets/2023-07/Client_VPN/2023-07-27-86.png)
+![운영 환경에서의 Client 인증서 삭제5](/assets/2023-07/Client_VPN/2023-07-27-87.png)
+[운영 환경에서의 Client 인증서 삭제5](/assets/2023-07/Client_VPN/2023-07-27-87.png)
+
+아래와 같이 정상적으로 작용이 되었으면 콘솔 상단에 적용되었다고 초록색 팝업창이 뜹니다.
+
+![운영 환경에서의 Client 인증서 삭제6](/assets/2023-07/Client_VPN/2023-07-27-88.png)
+[운영 환경에서의 Client 인증서 삭제6](/assets/2023-07/Client_VPN/2023-07-27-88.png)
+
+추가적으로 CRL에 포함된 인증서를 다시 VPN 툴인 AWS VPN Client와 OpenVPN에서 접속한 결과 아래와 같은 에러 메시지가 발생하는 것을 볼 수 있습니다.
+
+![운영 환경에서의 Client 인증서 삭제7](/assets/2023-07/Client_VPN/2023-07-27-89.png)  
+[운영 환경에서의 Client 인증서 삭제7](/assets/2023-07/Client_VPN/2023-07-27-89.png)  
+![운영 환경에서의 Client 인증서 삭제8](/assets/2023-07/Client_VPN/2023-07-27-90.png)  
+[운영 환경에서의 Client 인증서 삭제8](/assets/2023-07/Client_VPN/2023-07-27-90.png)  
+![운영 환경에서의 Client 인증서 삭제9](/assets/2023-07/Client_VPN/2023-07-27-91.png)  
+[운영 환경에서의 Client 인증서 삭제9](/assets/2023-07/Client_VPN/2023-07-27-91.png)  
+![운영 환경에서의 Client 인증서 삭제10](/assets/2023-07/Client_VPN/2023-07-27-92.png)  
+[운영 환경에서의 Client 인증서 삭제10](/assets/2023-07/Client_VPN/2023-07-27-92.png)  
+
 
 
 
 ### 리소스 삭제
 
+삭제 순서는 아래와 같습니다.  
+1. VPN 엔드포인트 삭제  
+- 클라이언트 엔드포인트 선택 후 대상 네트워크 연결에서 대상 네트워크 연결 해제 클릭
+- 클라이언트 VPN 엔드포인트 선택 후 작업 -> 클라이언트 VPN 엔드포인트 삭제  
+위 과정은 15-20분 정도 소요됩니다.
 
+2. ACM에 등록한 인증서 삭제
+- ACM 콘솔 -> 인증서 나열 -> server, client.domain.tld 인증서 모두 삭제
 
-## 출처 및 참고자료
+3. 로그 출력 대상 삭제
+- CloudWatch 관리 화면 이동
+- 로그 -> 로그 그룹(/aws/clientvpn) 선택 -> 작업 -> 로그 그룹 삭제 클릭
 
+4. EC2 인스턴스 삭제
 
+5. 해당 VPC 삭제
 
+6. 기타 리소스 삭제 기타 작성한 자원을 삭제합니다. 삭제하지 않으면 문제가 없습니다.  
+- 연결 클라이언트 제거  
+macOS/Windows 각 OS의 특정 단계에 따라 라는 AWS VPN Client이름의 앱을 삭제합니다.
+
+- 작성한 인증서 삭제  
+핸즈온을 순서대로 진행했을 경우, Windows는 C:\custom_folder, Linux/macOS ~/custom_folder/에는 , 다음의 파일을 할 수 있으므로, 불필요한 경우 삭제해 주세요.
 
 
 ## 출처 및 참고
 
 [AWS Client VPN Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP/03-hands-on/03-01-common/04-certificate)
 
-[볼륨 크기 조정 후 Windows 파일 시스템 확장](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/WindowsGuide/recognize-expanded-volume-windows.html)
+[AWS Client VPN이란](https://docs.aws.amazon.com/ko_kr/vpn/latest/clientvpn-admin/what-is.html)
 
-[https://kim-dragon.tistory.com/4](https://kim-dragon.tistory.com/4)
+[AWS Client VPN의 작동 방식](https://docs.aws.amazon.com/ko_kr/vpn/latest/clientvpn-admin/how-it-works.html)
