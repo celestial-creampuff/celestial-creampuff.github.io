@@ -525,7 +525,193 @@ VPC의 경우 Client VPN이 위치해야 할 VPC를 선택하고, 서브넷은 �
 
 
 ### VPN 연결
+해당 과정에서는 AWS Clinet VPN 엔드포인트에 연결하기 위한 도구를 설치하고 실제로 VPN 연결을 수행할 겁니다.
+제가 사용한 방법은 아래의 AWS WorkShop에서 제공하는 AWS 클라이언트 VPN 다운로드 툴을 사용했고, 두 번째는 OpenVPN 툴을 사용하여 접속을 하였습니다.
 
+먼저 AWS WorkShop에서 제공하는 AWS 클라이언트 VPN 다운로드 툴로 접속을 시도합니다.
+1. 아래의 링크에  들어가서  AWS 클라이언트 VPN 다운로드 하이퍼링크를 클릭하여 다운로드를 받습니다.  
+[AWS Client VPN Download 검색](https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP/03-hands-on/03-02-mutal/03-vpn-connection)
+
+2. 그리고 이전 항목에서 다운로드했던 downloaded-client-config.ovpn 파일을 편집해야 합니다.  </br></br>
+먼저 해당 파일을 메모장으로 변환 후 들어간 다음, <cert></cert>와< key></key> 설정을 끝에 추가합니다.  </br></br>
+그리고 해당 부분에서는 client.domain.tld에서 .crt 부분과 .key 부분에서 각각 ------BEGIN CERTIFICATE----- 에서 ------END CERTIFICATE----- 부분을 복사해서 붙여넣어야 합니다.      
+(이 과정은 전에 인증서 만들기 과정에서 설정한 사항입니다. 이름이 다르다면 client.domain.tld가 아닐 수 있습니다. 또한 해당 .crt 파일과 .key 파일을 열 때에도 연결 프로그램을 메모장으로 변환하여 열어주면 됩니다!) </br></br>
+해당 과정을 거치면 아래와 같게 됩니다! </br></br>
+그리고 저장을 클릭해주세요.
+![VPN 연결1](/assets/2023-07/Client_VPN/2023-07-27-52.png)  
+[VPN 연결1](/assets/2023-07/Client_VPN/2023-07-27-52.png)   
+위의 사진을 보면 저는 client.domain.tld의 .crt 파일과 .key 파일, downloaded-client-config.ovpn 파일을 모두 메모장으로 연결 프로그램을 변경 후 열었습니다.   
+그리고 downloaded-client-config.ovpn 파일에서 client.domain.tld의 .crt 파일과 .key 파일에서 ------BEGIN CERTIFICATE----- 에서 ------END CERTIFICATE----- 부분의 내용을 복사해서 붙여넣었습니다. 
+그리고 `<cert>,</cert>`와`<key>,</key>`의 분류는 위 사진과 같이 된겁니다.  
+다시 말하면   
+`<cert>`
+client.domain.tld .crt 파일의 ------BEGIN CERTIFICATE----- 에서 ------END CERTIFICATE----- 부분의 내용
+`</cert>`  
+`< key>`  
+client.domain.tld .key 파일의 ------BEGIN CERTIFICATE----- 에서 ------END CERTIFICATE----- 부분의 내용  
+`</key>`    
+이렇게 정리됩니다.  
+추가적으로 저는 downloaded-client-config.ovpn 파일의 이름을 rmi_cto.ovpn 으로 변경하였습니다!
+![VPN 연결2](/assets/2023-07/Client_VPN/2023-07-27-53.png)
+[VPN 연결2](/assets/2023-07/Client_VPN/2023-07-27-53.png) 
+
+3. 다음으로 다운로드 받았던 AWS 클라이언트 VPN 툴을 클릭해서 들어갑니다. 그리고 아래와 같은 과정을 따라줍니다.
+
+![VPN 연결3](/assets/2023-07/Client_VPN/2023-07-27-54.png)
+[VPN 연결3](/assets/2023-07/Client_VPN/2023-07-27-54.png)
+
+![VPN 연결4](/assets/2023-07/Client_VPN/2023-07-27-55.png)  
+[VPN 연결4](/assets/2023-07/Client_VPN/2023-07-27-55.png)
+
+![VPN 연결5](/assets/2023-07/Client_VPN/2023-07-27-56.png)  
+[VPN 연결5](/assets/2023-07/Client_VPN/2023-07-27-56.png)
+
+![VPN 연결6](/assets/2023-07/Client_VPN/2023-07-27-57.png)  
+[VPN 연결6](/assets/2023-07/Client_VPN/2023-07-27-57.png)  
+
+![VPN 연결7](/assets/2023-07/Client_VPN/2023-07-27-58.png)  
+[VPN 연결7](/assets/2023-07/Client_VPN/2023-07-27-58.png)
+
+![VPN 연결8](/assets/2023-07/Client_VPN/2023-07-27-59.png)  
+[VPN 연결8](/assets/2023-07/Client_VPN/2023-07-27-59.png)
+ 
+![VPN 연결9](/assets/2023-07/Client_VPN/2023-07-27-60.png)  
+[VPN 연결9](/assets/2023-07/Client_VPN/2023-07-27-60.png)
+
+![VPN 연결10](/assets/2023-07/Client_VPN/2023-07-27-61.png)  
+[VPN 연결10](/assets/2023-07/Client_VPN/2023-07-27-61.png)  
+
+4. 이렇게 마지막 사진과 같이 잘 연결된 것을 볼 수 있습니다.
+그리고 콘솔에서도 해당 사항을 확인할 수 있습니다!
+해당 콘솔로 접속해서 확인이 가능합니다! (VPC -> Client VPN Endpoint 에서 해당되는 클라이언트 VPN 엔드포인트 선택 후 연결 클릭)  
+연결 부분에서는 해당 연결의 상세한 정보를 볼 수 있어요
+
+![VPN 연결11](/assets/2023-07/Client_VPN/2023-07-27-62.png)  
+[VPN 연결11](/assets/2023-07/Client_VPN/2023-07-27-62.png)
+
+![VPN 연결12](/assets/2023-07/Client_VPN/2023-07-27-63.png)  
+[VPN 연결12](/assets/2023-07/Client_VPN/2023-07-27-63.png)  
+
+5. 또한 기존에 만들었던 EC2 인스턴스와 통신이 되는 지 확인하기 위하여 ping 명령어를 입력합니다.
+(만약 Windows cmd에서 ping 명령어 인식이 안되는 경우, 환경변수가 설정되지 않아 그럴 수 있습니다. 이럴 때의 경로는C:\Windows\System32 <-이겁니다!)  
+먼저 EC2 인스턴스의 프라이빗 IPv4 주소 확인을 합니다.
+
+![VPN 연결13](/assets/2023-07/Client_VPN/2023-07-27-64.png)  
+[VPN 연결13](/assets/2023-07/Client_VPN/2023-07-27-64.png)
+
+```py
+## Ping 보내기
+ping <해당 Private IP 주소>
+
+--> ping 10.0.10.114
+
+======출력 화면=====
+
+C:\>cd Windows\System32
+
+C:\Windows\System32>ping 0.0.0.0
+
+Ping 0.0.0.0 32바이트 데이터 사용:
+PING: 전송하지 못했습니다. 일반 오류입니다.
+PING: 전송하지 못했습니다. 일반 오류입니다.
+PING: 전송하지 못했습니다. 일반 오류입니다.
+PING: 전송하지 못했습니다. 일반 오류입니다.
+
+0.0.0.0에 대한 Ping 통계:
+    패킷: 보냄 = 4, 받음 = 0, 손실 = 4 (100% 손실),
+
+C:\Windows\System32>
+
+C:\Windows\System32>ping 10.0.10.114
+
+Ping 10.0.10.114 32바이트 데이터 사용:
+10.0.10.114의 응답: 바이트=32 시간=9ms TTL=126
+10.0.10.114의 응답: 바이트=32 시간=6ms TTL=126
+10.0.10.114의 응답: 바이트=32 시간=7ms TTL=126
+10.0.10.114의 응답: 바이트=32 시간=6ms TTL=126
+
+10.0.10.114에 대한 Ping 통계:
+    패킷: 보냄 = 4, 받음 = 4, 손실 = 0 (0% 손실),
+왕복 시간(밀리초):
+    최소 = 6ms, 최대 = 9ms, 평균 = 7ms
+
+C:\Windows\System32>
+```
+
+![VPN 연결14](/assets/2023-07/Client_VPN/2023-07-27-65.png)  
+[VPN 연결14](/assets/2023-07/Client_VPN/2023-07-27-65.png)  
+
+이렇게 통신도 잘 되는 것을 볼 수 있습니다!  
+해당 연결은 아래와 같이 종료할 수 있습니다.
+
+![VPN 연결15](/assets/2023-07/Client_VPN/2023-07-27-66.png)  
+[VPN 연결15](/assets/2023-07/Client_VPN/2023-07-27-66.png)  
+
+그리고 핑 명령어와 콘솔 확인을 통해서 완전히 연결이 끊어진 것을 볼 수 있습니다.
+```py
+C:\Windows\System32>ping 10.0.10.114
+
+Ping 10.0.10.114 32바이트 데이터 사용:
+10.128.128.128의 응답: 대상 네트워크에 연결할 수 없습니다.
+10.128.128.128의 응답: 대상 네트워크에 연결할 수 없습니다.
+10.128.128.128의 응답: 대상 네트워크에 연결할 수 없습니다.
+10.128.128.128의 응답: 대상 네트워크에 연결할 수 없습니다.
+
+10.0.10.114에 대한 Ping 통계:
+    패킷: 보냄 = 4, 받음 = 4, 손실 = 0 (0% 손실),
+
+C:\Windows\System32>
+```
+
+![VPN 연결16](/assets/2023-07/Client_VPN/2023-07-27-67.png)
+[VPN 연결16](/assets/2023-07/Client_VPN/2023-07-27-67.png)
+
+![VPN 연결17](/assets/2023-07/Client_VPN/2023-07-27-68.png)
+[VPN 연결17](/assets/2023-07/Client_VPN/2023-07-27-68.png)
+
++) 추가적인 Open VPN 프로그램을 이용할 때는 기존사항에서 변경해야 할 사항이 우선 있습니다.
+
+Open VPN 도구를 이용하여 연결할 시, 아래 사진과 같이 downloaded-client-config.ovpn (rmi_cto.ovpn) 파일에서 DNS 이름에 해당되는 부분을 찾아서 수정해야 합니다. (두번째 사진처럼 앞에 이름을 넣고 . 을 찍어주면 됩니다!)
+
+![VPN 연결18](/assets/2023-07/Client_VPN/2023-07-27-69.png)
+[VPN 연결18](/assets/2023-07/Client_VPN/2023-07-27-69.png)
+
+![VPN 연결19](/assets/2023-07/Client_VPN/2023-07-27-70.png)
+[VPN 연결19](/assets/2023-07/Client_VPN/2023-07-27-70.png)
+
+그리고 OpenVPN 프로그램을 열어서 아래 사진과 같이 해주시면, 정상적인 통신이 되는 것을 확인할 수 있습니다.  
+![VPN 연결20](/assets/2023-07/Client_VPN/2023-07-27-71.png)
+[VPN 연결20](/assets/2023-07/Client_VPN/2023-07-27-71.png)
+
+![VPN 연결21](/assets/2023-07/Client_VPN/2023-07-27-72.png)
+[VPN 연결21](/assets/2023-07/Client_VPN/2023-07-27-72.png)
+
+![VPN 연결22](/assets/2023-07/Client_VPN/2023-07-27-73.png)
+[VPN 연결22](/assets/2023-07/Client_VPN/2023-07-27-73.png)
+
+![VPN 연결23](/assets/2023-07/Client_VPN/2023-07-27-74.png)
+[VPN 연결23](/assets/2023-07/Client_VPN/2023-07-27-74.png)
+
+![VPN 연결24](/assets/2023-07/Client_VPN/2023-07-27-75.png)
+[VPN 연결24](/assets/2023-07/Client_VPN/2023-07-27-75.png)
+
+![VPN 연결25](/assets/2023-07/Client_VPN/2023-07-27-76.png)
+[VPN 연결25](/assets/2023-07/Client_VPN/2023-07-27-76.png)
+
+![VPN 연결26](/assets/2023-07/Client_VPN/2023-07-27-77.png)
+[VPN 연결26](/assets/2023-07/Client_VPN/2023-07-27-77.png)
+
+![VPN 연결27](/assets/2023-07/Client_VPN/2023-07-27-78.png)
+[VPN 연결27](/assets/2023-07/Client_VPN/2023-07-27-78.png)
+
+![VPN 연결28](/assets/2023-07/Client_VPN/2023-07-27-79.png)
+[VPN 연결28](/assets/2023-07/Client_VPN/2023-07-27-79.png)
+
+![VPN 연결29](/assets/2023-07/Client_VPN/2023-07-27-80.png)
+[VPN 연결29](/assets/2023-07/Client_VPN/2023-07-27-80.png)
+
+![VPN 연결30](/assets/2023-07/Client_VPN/2023-07-27-81.png)
+[VPN 연결30](/assets/2023-07/Client_VPN/2023-07-27-81.png)
 
 
 ### 로그 확인
