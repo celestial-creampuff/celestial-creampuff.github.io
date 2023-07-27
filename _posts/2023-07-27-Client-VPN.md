@@ -11,20 +11,29 @@ toc_sticky: true
 ---
 
 ## 개요
-#### Client VPN 이란?</br>
+
+#### Client VPN 이란?
 
 AWS Client VPN은 AWS 리소스 및 온프레미스 네트워크의 리소스에 안전하게 액세스할 수 있는 클라이언트 기반 관리형 VPN 서비스입니다. 클라이언트 VPN을 사용하면 OpenVPN 기반의 VPN 클라이언트를 사용하여 어디서나 리소스에 액세스가 가능합니다.
 
 ## Hands-On
+
 해당 핸즈온은 아래와 같은 특징을 가지고 있습니다!
+
 #### 구성도
+
 (추가하기)
+
 #### 실습환경
+
 - Chrome 브라우저 사용
 - 로컬 = Windows 환경
 - ap-northeast-2(서울 리전)
+
 ### VPC 환경 설정
+
 #### VPC 구축
+
 1. VPC 콘솔로 이동합니다.
 2. VPC 생성을 클릭 후 아래와 같이 VPC 하나를 만들어줍니다.
 ![VPC 생성](/assets/2023-07/Client_VPN/2023-07-27-1.png)</br>
