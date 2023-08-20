@@ -1,6 +1,6 @@
 ---
 title: "[AWS] 기초부터 시작하는 AWS 구축하기 4"
-date: 2023-08-20 02:00:00 -0400
+date: 2023-08-20 03:00:00 -0400
 categories: AWS VPC NAT_Gateway
 tags:
     - AWS
