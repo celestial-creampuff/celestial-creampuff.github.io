@@ -1,7 +1,7 @@
 ---
 title: "[AWS] 기초부터 시작하는 AWS 구축하기 - Bastion Host EC2를 통한 Private 서브넷에 있는 EC2 접근하기"
 date: 2023-08-27 01:00:00 -0400
-categories: AWS VPC
+categories: AWS EC2 Computing Server 
 tags:
     - AWS
     - EC2
