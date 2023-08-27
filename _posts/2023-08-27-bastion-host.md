@@ -58,116 +58,96 @@ toc_sticky: true
 
 <br>
 그리고 방화벽(보안그룹)의 정보는 아래와 같다.
-![보안그룹](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%203.14.11.png) 
+
+![보안 그룹 생성](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%203.11.11.png)<br><br>
+
+그리고 이렇게 WEB-Server-01의 인스턴스를 생성하였다.
+![새로운 EC2 생성](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.36.03.png)
 
 
 ### 2-2. Bastion Host에 키 복사
+우리는 Bastion Host 만들었을 때 동시에 만든 키 페어를 사용하지 않는다. 조금 전에 만들었던 정보에 보면 web 키 페어를 따로 만들었다는 것을 눈치챘을 것이다.
+
+하지만 이 키 페어를 사용하려면 아래와 같은 방법을 따라야 한다. 방법은 사람마다 상이하지만 나는 Bastion-Host로 사용하는 EC2에 직접 키페어 파일 폴더를 만들었다. 그리고 거기에 키 내용을 복사하고 그것을 이용해서 Private EC2에 접근했다.
+
+1. 우선 키는 아래와 같이 생성해줬다.<br>
+그리고 다운로드 받은 파일 경로에서 직접 키페어를 열어주자.
+![키페어 파일](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.30.54.png)<br><br>
+
+2. 이때 Mac 유저들중에서 주의해야 할 점은 우클릭 후 다음으로 열기 -> 기타에서 열어줘야 내용을 볼 수 있다.
+![키페어 파일2](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.40.21.png)<br><br>
+
+3. 그리고 텍스트 편집기를 찾아 그것으로 열어주자!
+![키페어 파일2](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.40.42.png)<br><br>
+
+4. 그렇다면 아래와 같이 내용을 볼 수 있다. 그 해당내용 전체를 복사해주자!
+![키페어 파일2](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%203.14.11.png)<br><br>
+
+5. 이제 서버에 다시 접속해주자!
+서버 접속은 전에 포스팅 했던 게시물을 참고하면 된다.<br>
+(여기서 서버는 방금 Private Sunbet에 생성한 EC2가 아니라 Bastion Host로 만든 서버이니 걱정 안해도 된다!)
+<br>
+
+```py
+$ cd Downloads
+
+$ ssh -i bastion_key.pem ec2-user@x.xx.xx.xxx
+
+----여기까지 서버 접속이 완료되었다면 아래를 따라와주자.----
+
+## key-folder 라는 폴더를 생성
+$ mkdir key-folder
+
+## 폴더 확인을 위한 명령어
+$ ls
+
+### 결과값
+key-folder
+
+## key-folder로 이동
+$ cd key-folder
+
+## web-key 라는 폴더를 생성
+$ mkdir web-key
+
+## 폴더 확인을 위한 명령어
+$ ls
+
+### 결과값
+web-key
+
+## web-key라는 폴더에 접근
+
+$ cd web-key
+
+### WEB-Server-key.pem 이라는 파일을 생성
+$ touch WEB-Server-key.pem
+
+### WEB-Server-key.pem 파일 수정
+$ vim WEB-Server-key.pem
+```
+이때 텍스트 편집기(Windows에서는 메모장)를 통해서 내용을 봤고 복사까지 했다. 그 복사했던 내용을 아래와 같이 붙여주고 저장하고 나온다!
+![키 페어 파일 복사](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.41.23.png)
+
+이렇게 키 페어 파일까지 Bastion 목적으로 쓰이는 EC2에 옮겼다. 마지막으로 이제 Private EC2에 접근하자!
 
 
 ### 2-3. Bastion Host를 통한 EC2 접근하기
+먼저 EC2 콘솔에서 접근해야 할 EC2의 Private IP를 아래와 같이 복사한다.
+![private EC2 접근](/assets/2023-08/Bastion-Host/스크린샷%202023-08-27%20오후%202.47.48.png)
 
-
-
-
-### 1-1. EC2의 구성
-EC2는 대표적으로 아래와 같은 특징을 가지고 있다.
-- EBS(Elastic Block Store) : EBS는 EC2의 스토리지이며 흔히 집에서 사용하는 컴퓨터의 하드 디스크라고 보면 된다.<br> 스토리지인 만큼 데이터를 저장하는 역할을 하고 있으며, C드라이브가 아닌 우리가 드라이브를 추가할 때 D드라이브, E드라이브 등등을 추가하는 것처럼 AWS 클라우드 상에서 EC2 인스턴스에 추가할 수 있는 영구 블록 스토리지 볼륨이다.<br><br>
-- AMI(Amazon Machine Image) : 흔히 AWS에서 사용자들에게 제공하는 이미지이다. 이 이미지를 통해서 OS에 초기 세팅을 번거롭지 않게 할 수 있으며, 또한 이미 다 초기 세팅과 프로그램이 설치된 AMI를 마켓플레이스에서 구입해서 사용할 수 있다. <br>AMI는 기본적으로 OS를 선택할 때 고를 수 있으며, 우리도 인스턴스를 만들고 삭제가 되어도 해당 데이터를 복구하기 위해 많이 사용하게 될 것이다.(사실상 백업을 위해서는 필수이다!!) AMI를 통해서 우리는 신속하게 서버를 커스터마이징을 할 수 있고, 다시 복구를 할 때 반복적인 설치를 안해서 시간 절약도 할 수 있다.
-
-### 1-2. EC2의 특징
-1. EC2는 사용자의 요구사항에 따라 사양과 스토리지를 조절할 수 있다.<br>(단, EBS의 경우 용량 증설만 가능하지 감축은 못한다..)<br><br>
-2. 자신이 선택하고 싶은 OS를 고를 수 있다.<br> 그래서 운영 환경이나 테스트 환경에서 특정 OS를 써야 한다면 웬만한 운영체제는 AWS가 가지고 있어 쉽게 선택을 할 수 있다.<br><br>
-3. 온프레미스에서는 서버의 구축 비용과 기간은 길었다.<br> 하지만 EC2의 경우, 몇 분이면 전 세계에 생성할 수 있으며 원하는 수 만큼 또한 생성이 가능하다.<br><br>
-4. 자신이 서버를 어떤 용도에 사용할 것인지(범용, 메모리 최적화, AI 및 머신러닝 등등)에 따라서 인스턴스 패밀리가 특화되어 있어, 원하는 용도에 따라 생성이 가능하다.<br><br>
-5. 대표적으로 다른 AWS 서비스들과 유연하고 탄력적인 연동이 가능하다!
-
-## 2. EC2 Hands-on
-이번 핸즈온에서는 기본적인 Amazon-Linux 서버를 만들어 볼 것이다!
-그리고 해당 서버에 접속하면서 어떤 식으로 서버에 접속하는지도 익혀보는 시간을 갖도록 하자 🙂
-
-내 환경은 Mac OS 환경이며, 조만간 Windows 환경에서도 접속하는 법을 포스팅하도록 하겠다 🫠
-### 2-1. EC2의 생성
-1. 먼저 AWS 계정에 로그인 후에 돋보기 란에 EC2를 입력하고 서비스를 클릭한다.
-![EC2 생성 1](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.02.01.png)<br><br>
-2. 좌측 대시보드에서 인스턴스 란에 인스턴스 클릭 후 인스턴스 시작을 눌러준다.
-![EC2 생성 2](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.02.55.png)<br><br>
-3. 이름을 입력하고 애플리케이션 및 OS 이미지는 현재 작성날짜 기준으로 기본값인 Amazon Linux와 AMI는 Amazon Linux 2023 AMI를 가져온다.<br><br>
-(여기서 나는 이름에 Bastion을 붙였는데 이와 같이 한 이유는 해당 서버를 Bastion Server로 두고, Private 서브넷에 배치할 EC2에 접근하기 위해서다. 근데 사실 요새는 Bastion Server 말고도 Private EC2에 접근하는 방법이 많은데 그건 나중에 차차 알아가보도록 하자 🔥)
-![EC2 생성 3](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.03.49.png)<br><br>
-4. 인스턴스 유형은 t2.micro를 선택하였으며, 테스트 용도이기 때문에 제일 과금이 안되는 타입을 골랐다!<br>(기본값임 사실)<br>
-그리고 키 페어를 생성해주기 위하여 새 키 페어 생성을 클릭하자.
-![EC2 생성 4](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.04.07.png)<br><br>
-5. 키 페어 이름은 아래와 같이 설정하였고 RSA 유형과 .pem 형식을 사용했다.<br> 여기서 만약 .ppk 형식으로 하면 Windows에서 Putty라는 SSH 툴을 사용한다. <br><br>하지만 Mac 유저라면 그럴 일이 없으니 .pem으로 해주자.<br>
-Windows 유저들도 .pem으로 권장하기는 한다..
-![EC2 생성 5](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.04.25.png)<br><br>
-6. 그리고 어떤 VPC와 네트워크에 놓아야 하는지 선택을 해야 한다. 나는 내가 전에 만들었던 VPC에 EC2를 배치가 목적이기에 편집을 클릭한다.
-![EC2 생성 6](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.05.26.png)<br><br>
-7. VPC는 내가 전에 골랐던 VPC를 선택하였다<br>
-그리고 해당 서버는 Bastion 역할을 해줘야 하기 때문에 퍼블릭 서브넷을 선택했다.<br> 원래는 EIP를 할당받아야 했었으나 테스트가 목적이기 때문에 EIP는 할당받지 않고 대신에 퍼블릭 IP 자동 할당을 선택하였다.<br>
-<br>보안 그룹은 새로 만들어줬으며 해당 보안 그룹은 ssh 유형의 22번 포트가 어디에서든지 접속할 수 있도록 아래 화면과 같이 설정했다. <br><br>물론 추가적인 보안을 요구한다면 보안 그룹 규칙 추가 버튼을 눌러 계속적으로 정책을 만들 수 있고, 고급 네트워크 구성을 클릭하여 더욱 상세한 네트워크를 구성하게끔 할 수 있다.<br>
-<br>하지만 나는 나중에 해보는걸로 하겠다..
-![EC2 생성 7](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.07.19.png)<br><br>
-8. 스토리지 구성 또한 AWS가 정한 기본값 그대로 가져간다.
-![EC2 생성 8](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.07.35.png)<br><br>
-9. 이후에 모든 정보를 한번 더 확인하고 정확하다면 인스턴스 시작을 눌러주자.
-![EC2 생성 9](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.07.51.png)<br><br>
-10. 이제 인스턴스가 시작이 되었다! 내 서버가 생긴 셈이다~
-![EC2 생성 10](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.08.10.png)<br><br>
-11. 아래와 같이 보면 인스턴스 상태가 대기 중으로 뜨고 상태 검사 또한 안뜨는데 얼마 후에 새로고침 버튼 한 번만 클릭해주자.
-![EC2 생성 11](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.08.22.png)<br><br>
-12. 그러면 아래와 같이 인스턴스 상태는 실행 중이고 상태 검사는 2/2개 검사 통과라고 보인다.<br><br> 이로써 자신이 만든 EC2 인스턴스에 접속할 수 있는 상태가 된 것이다!
-![EC2 생성 12](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.20.56.png)<br><br>
-
-
-
-
-
-
-
-
-
-
-
-
-### 2-2. EC2 접속방법
-EC2에 접속하기에 앞서 알아둬야 할 것이 있다. 만약 키페어를 생성하지 않았다면 콘솔내에서 접속이 가능하나 우리는 방금 전에 키페어를 만들고, <br><br해당 키페어를 다운로드 하면서 지금 각자 자신들의 컴퓨터 또는 노트북(이걸 Local이라고 한다!)에 파일이 있는 상태이다! <br><br>보통 경로는 Download에 있으나 만약 자신이 Download 시 기본 경로를 다른 곳으로 설정했다면 그 곳에서 찾길 바란다 ㅜㅜ
-
-1. 먼저 자신이 만든 인스턴스 옆에 체크 표시를 해서 상세 정보를 확인할 수 있다. <br>이때 우리는 퍼블릭 IPv4 주소 정보를 복사해야 한다. 옆에 정사각형 두개 겹친 모양이 있는데 그것을 눌러 복사가 가능하다. <br><br>그걸 복사해주자!
-![EC2 접속 1](/assets/2023-08/EC2/08-21_create/스크린샷%202023-08-21%20오후%209.39.47.png)
-
-2. 그리고 아래를 따라와주면 된다!<br>
-나는 iTerm 툴을 사용하였다.<br>
-(참고로 현재 실습은 Mac OS 전용이며 Windows 접속 방법은 추후에 다시 올리겠다!) 
-
+이제 아래의 명령어를 따라와주자!
 ```py
-# 키페어 파일이 있는 경로로 이동
-    ~  cd Downloads
+## 키 권한 축소 
+$ chmod 400 WEB-Server-key.pem
 
-# 키페어 파일에게 권한 축소(안하면 너무 많은 권한을 가지고 있다고 거부되는 것 같다 ㅜㅜ)
+## Private Subnet에 배치된 EC2 접속
+$ ssh -i WEB-Server-key.pem ec2-user@xx.x.xx.xxx
 
-## 접속 예시
-$ chmod 400 <key pair name.pem>
+### 중간에 yes 입력
 
-## 실제 접속
-    ~/Downloads  chmod 400 bastion_key.pem
-
-# 접속(이때 ssh -i 명령어를 이용하며 Amazon Linux는 ec2-user로 접속해야 한다) 
-
-## 접속 예시 (예시에서 public IP는 내가 접속하고자 하는 인스턴스의 퍼블릭 IP를 적어주면 된다.)
-$ ssh -i <key pair name.pem> ec2-user@<public IP>
-
-## 접속 실제
-    ~/Downloads  ssh -i bastion_key.pem ec2-user@x.xx.xx.xxx
-
-# 그리고 아래와 같은 문구가 뜰텐데, 여기서 yes를 입력해주자!
-The authenticity of host 'x.xx.xx.xxx (x.xx.xx.xxx)' can't be established.
-ED25519 key fingerprint is SHA256:CtXJcoteB17zOHEWLRuoRexdGl9vpoeCl5ZQKEZYg9o.
-This key is not known by any other names
-Are you sure you want to continue connecting (yes/no/[fingerprint])?  yes
-
-
-# 아래와 같이 된다면 접속이 성공한 것이다!
-Warning: Permanently added 'x.xx.xx.xxx' (ED25519) to the list of known hosts.
+## 접속 성공!
+Warning: Permanently added 'xx.x.xx.xxx' (ED25519) to the list of known hosts.
    ,     #_
    ~\_  ####_        Amazon Linux 2023
   ~~  \_#####\
@@ -178,21 +158,87 @@ Warning: Permanently added 'x.xx.xx.xxx' (ED25519) to the list of known hosts.
       ~~._.   _/
          _/ _/
        _/m/'
-[ec2-user@ip-10-0-10-99 ~]$
+
+$
+
+```
+<br><br>
+이렇게 Bastion Host(EC2)를 통해서 Private Subnet에 있는 EC2에 접근을 성공적으로 할 수 있었다!<br>
+
+내가 접근했을 때 명령어인데 참고하면 좋을 것 같다!
+```py
+    ~  cd Downloads
+
+    ~/Downloads  ssh -i bastion_key.pem ec2-user@x.xxx.xx.xxx
+
+The authenticity of host 'x.xxx.xx.xxx (x.xxx.xx.xxx)' can't be established.
+ED25519 key fingerprint is SHA256:CtXJcoteB17zOHEWLRuoRexdGl9vpoeCl5ZQKEZYg9o.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:109: x.xxx.xx.xxx
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'x.xxx.xx.xxx' (ED25519) to the list of known hosts.
+
+A newer release of "Amazon Linux" is available.
+  Version 2023.1.20230825:
+Run "/usr/bin/dnf check-release-update" for full release and version update info
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Mon Aug 21 12:44:13 2023 from x.xxx.xx.xxx
+[ec2-user@ip-10-0-10-99 ~]$ mkdir key-folder
+[ec2-user@ip-10-0-10-99 ~]$ ls
+key-folder
+[ec2-user@ip-10-0-10-99 ~]$ cd key-folder
+[ec2-user@ip-10-0-10-99 key-folder]$ mkdir web-key
+[ec2-user@ip-10-0-10-99 key-folder]$ ls
+web-key
+[ec2-user@ip-10-0-10-99 key-folder]$ cd web-key
+[ec2-user@ip-10-0-10-99 web-key]$ touch WEB-Server-key.pem
+[ec2-user@ip-10-0-10-99 web-key]$ vim WEB-Server-key.pem
+[ec2-user@ip-10-0-10-99 web-key]$ chmod 400 WEB-Server-key.pem
+[ec2-user@ip-10-0-10-99 web-key]$ ssh -i WEB-Server-key.pem ec2-user@xx.x.xx.xxx
+The authenticity of host 'xx.x.xx.xxx (xx.x.xx.xxx)' can't be established.
+ED25519 key fingerprint is SHA256:X6y8JiZ4VcIMjSg0S87bERZd3M+PsUsr0FW2tx7EB/4.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'xx.x.xx.xxx' (ED25519) to the list of known hosts.
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+[ec2-user@ip-xx-x-xx-xxx ~]$
 ```
 
+## 3. 마치며
+사실 요새는 보안이 매우 중요해지면서 Bastion-host를 통한 접근은 점점 멀어지고 있다고 한다(AWS에서는..?)<br>
 
-이렇게 EC2에 접속하는 방법까지 알아봤다. 하지만 EC2 접속은 OS와 AMI가 무엇인지에 따라 다르며 조건에 따라 또 다를 수 있다. 하지만 이렇게 우리는 기본적인 접속은 할 수 있었다.
+요새는 SSM을 사용해서 Private Subnet에 있는 EC2에 접근하기도 하고 Client VPN을 이용하거나 AWS에서 제공하는 CloudShell을 이용한다고 한다.(물론 난 아직 이것들을 못써봤다 ㅜㅜ)
 
-이 서버의 이름은 Bastion이니까 다음에는 Private Subnet에 EC2를 배치하고 접속하는 방법을 알아보면서 Bastion Host의 역할이 무엇인지에 대해 알아보자 🫠
-<br><br><br><br><br><br>
+시간되면 이것도 공부하고 나서 포스팅을 하는걸로 하자!!🥹
+
+
+<br><br><br>
 끝!
 <br><br><br>
 ## 참고 및 출처
-[Amazon EC2란 무엇인가요?](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/concepts.html)
 
-[EC2 개념 원리 & 사용 세팅](https://inpa.tistory.com/entry/AWS-📚-EC2-개념-사용-구축-세팅-💯-정리-인스턴스-EBS-AMI#ebselastic_block_storage_이해하기)
+[Bastion Host의 이해와 AWS에서의 구성 (Proxy)](https://err-bzz.oopy.io/f5616e26-79ca-4167-b2eb-140de69b9b54)
 
-[[AWS] EC2란 무엇인가](https://seoyeonhwng.medium.com/aws-ec2란-무엇인가-acf6b7041908)
+[Bastion Host 란](https://dodomp0114.tistory.com/7)
 
-[AWS-EC2-개념-정리](https://velog.io/@server30sopt/AWS-EC2-개념-정리)
+[Bastion Host란 무엇인가?](https://skstp35.tistory.com/363)
+
+[EC2 Bastion Host를 통해 Private Subnet EC2에 접속](https://dev.classmethod.jp/articles/access-private-subnet-ec2-via-ec2-bastion-host/)
