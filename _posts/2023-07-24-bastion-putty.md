@@ -69,6 +69,7 @@ https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 ![](/assets/2023-08/Bastion-Host/09_new/그림9.png)<br><br>
 7. Login as에 ec2-user를 입력하면 Putty를 통해 Bastion-EC2에 접속이 성공적으로 이루어졌다. 아래부터는 Bastion Host를 이용하여 Private EC2에 접속 (Windows CMD편)과 유사하다고 보면 된다!<br><br>
 ![](/assets/2023-08/Bastion-Host/09_new/그림10.png)<br><br>
+
 ```py
 ## key 폴더 생성
 mkdir key
@@ -90,6 +91,7 @@ ssh -i <키 파일 경로> ec2-user@<내부 EC2의 Private IP>
 ### 내부 EC2 접속하기 (예시)
 ssh -i key/DEV-Private.pem ec2-user@10.200.10.123
 ```
+
 <br>
 접속 화면은 아래와 같다!
 
