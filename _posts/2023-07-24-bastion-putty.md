@@ -43,7 +43,7 @@ Putty로 Private EC2에 접속하는 방법은 두 가지가 있다.<br>
 <br>
 첫 번째부터 알아가보도록 하자!
 
-### 첫 번째 방법 (일반적인 Putty편)
+### 첫 번째 방법 - Putty
 1. 우선 아래의 웹 사이트에 putty를 다운로드 하자! (만약, putty가 미리 설치되어 있으면 1번은 건너뛰어도 된다.) <br><br>
 https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 <br><br>
@@ -100,7 +100,7 @@ ssh -i key/DEV-Private.pem ec2-user@10.200.10.123
 이제 putty를 통하여 포토포워딩 방식을 알아보도록 하자!
 <br><br><br>
 
-### 2. 두 번째 방법 Bastion Host를 통한 내부 EC2 접속 (Putty를 통한 포트 포워딩 편)
+### 2. 두 번째 방법 - Bastion Host를 통한 내부 EC2 접속 (Putty를 통한 포트 포워딩 편)
 
 이번 섹션에서는 Putty를 보다 더 자세히 다룰 것이니 꿀팁도 있으니까 한번 봐보도록 하자!
 
